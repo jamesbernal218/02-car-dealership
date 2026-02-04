@@ -11,6 +11,7 @@ import {
 
 import { CarsService } from './cars.service';
 import { CreateCarDto } from './dto/create-car.dto';
+import { UpdateCarDto } from './dto/update-car.dto';
 
 @Controller('cars')
 export class CarsController {
@@ -31,8 +32,11 @@ export class CarsController {
   }
 
   @Patch(':id')
-  updateCar(@Body() createCarDto: CreateCarDto) {
-    return createCarDto;
+  updateCar(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() updateCarDto: UpdateCarDto,
+  ) {
+    return this.carsService.updatedCar(id, updateCarDto);
   }
 
   @Delete(':id')
