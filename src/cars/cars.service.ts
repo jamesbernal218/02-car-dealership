@@ -54,4 +54,9 @@ export class CarsService {
 
     return updatedCar;
   }
+
+  delete(id: string) {
+    const carBD = this.getCarById(id);
+    this.cars = this.cars.filter((car) => car !== carBD);
+  }
 }
