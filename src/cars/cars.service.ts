@@ -1,27 +1,26 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { Car } from './interfaces/car.interface';
+import { v4 as uuid } from 'uuid';
+import { CreateCarDto } from './dto/create-car.dto';
+import { UpdateCarDto } from './dto/update-car.dto';
 
 @Injectable()
 export class CarsService {
-  private cars = [
+  private cars: Car[] = [
     {
-      id: 1,
+      id: uuid(),
       brand: 'Toyota',
       model: 'Corolla',
     },
     {
-      id: 2,
+      id: uuid(),
       brand: 'Honda',
       model: 'Civic',
     },
     {
-      id: 3,
+      id: uuid(),
       brand: 'Ford',
       model: 'Mustang',
-    },
-    {
-      id: 4,
-      brand: 'Chevrolet',
-      model: 'Camaro',
     },
   ];
 
@@ -29,12 +28,35 @@ export class CarsService {
     return this.cars;
   }
 
-  getCarById(id: number) {
+  getCarById(id: string) {
     console.log(id);
     const car = this.cars.find((car) => car.id === id);
     if (!car) {
       throw new NotFoundException(`Car with id ${id} not found`);
     }
     return car;
+  }
+
+  createCar(createCarDto: CreateCarDto) {
+    this.cars.push({
+      id: uuid(),
+      ...createCarDto,
+    });
+    return { id: uuid(), ...createCarDto };
+  }
+
+  updatedCar(id: string, updateCarDto: UpdateCarDto) {
+    const carBD = this.getCarById(id);
+
+    const updatedCar = { ...carBD, ...updateCarDto, id };
+
+    this.cars = this.cars.map((car) => (car.id === id ? updatedCar : car));
+
+    return updatedCar;
+  }
+
+  delete(id: string) {
+    const carBD = this.getCarById(id);
+    this.cars = this.cars.filter((car) => car !== carBD);
   }
 }
